@@ -1,11 +1,12 @@
 #Rodar o site: python -m uvicorn main:app --reload
 # Fastapi
 # pip install fastapi uvicorn jinja2 python-multipart
-from fastapi import FastAPI , Request
+from fastapi import FastAPI , Request , Depends , Form
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse , RedirectResponse
 #Para salvar o CSS em pastas Separadas
 from fastapi.staticfiles import StaticFiles
+from models import get_db, Curso , Aluno
 
 #Rodar o servidor: 
 app = FastAPI(title = "Gestão")
@@ -42,6 +43,19 @@ def listar_alunos(request: Request):
         "alunos.html",
         {"request": request , "alunos" : alunos}
 
+
+
+    )
+
+
+#Exibir formulario de criar um curso
+@app.get("/cadastrar_curso")
+def exibir_cadastro(request: Request):
+    return templates.TemplateResponse(
+
+        request,
+        "cadastro_curso.html" ,
+        {"request": request}
 
 
     )
