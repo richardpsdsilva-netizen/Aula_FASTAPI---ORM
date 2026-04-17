@@ -7,6 +7,7 @@ from fastapi.responses import HTMLResponse , RedirectResponse
 #Para salvar o CSS em pastas Separadas
 from fastapi.staticfiles import StaticFiles
 from models import get_db, Curso , Aluno
+from sqlalchemy.orm import Session
 
 #Rodar o servidor: 
 app = FastAPI(title = "Gestão")
@@ -49,7 +50,7 @@ def listar_alunos(request: Request):
 
 
 #Exibir formulario de criar um curso
-@app.get("/cadastrar_curso")
+@app.get("/curso/cadastro")
 def exibir_cadastro(request: Request):
     return templates.TemplateResponse(
 
@@ -59,3 +60,16 @@ def exibir_cadastro(request: Request):
 
 
     )
+
+# Cadastrar o Curso
+@app.post("/curso")
+def criar_curso(
+    nome: str = Form(...),
+    duracao_dias: int = Form(...),
+    descricao: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    novo_curso = Curso( nome = nome , duracao_dias = duracao_dias , descricao = descricao )
+    db.add(novo_curso)
+    db.commit()
+    return RedirectResponse(url = "/" , status_code = 303 )
